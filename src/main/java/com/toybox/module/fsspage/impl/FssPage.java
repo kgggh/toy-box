@@ -1,6 +1,6 @@
-package com.toybox.modlue.fsspage.impl;
+package com.toybox.module.fsspage.impl;
 
-import com.toybox.modlue.fsspage.model.*;
+import com.toybox.module.fsspage.model.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.toybox.modlue.fsspage.model;
+package com.toybox.module.fsspage.model;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -9,19 +9,18 @@ import java.util.List;
 
 @Slf4j
 @ToString
-public class Search extends Finder{
+public class Filter extends Finder{
     private String field;
     private String value;
 
-    public Search(String field, String value) {
+    public Filter(String field, String value) {
         this.field = field;
         this.value = value;
     }
 
-    public Search(Object t) throws IllegalAccessException {
+    public Filter(Object t) throws IllegalAccessException {
         for (Field f : t.getClass().getDeclaredFields()) {
             f.setAccessible(true);
-
             if(f.get(t) != null) {
                 this.field = f.getName();
                 this.value = String.valueOf(f.get(t));
@@ -31,15 +30,15 @@ public class Search extends Finder{
 
     @Override
     public <T> List<T> find(List<T> list) {
-        if(this.field == null || this.value == null) {
+        if (this.field == null || this.value == null) {
             return list;
         }
         if(list.isEmpty()) {
             return list;
         }
+
         try {
             List<T> result = new ArrayList<>();
-
             for (T t : list) {
                 Field[] declaredFields = t.getClass().getDeclaredFields();
                 add(result, t, declaredFields);
@@ -63,7 +62,7 @@ public class Search extends Finder{
     @Override
     protected <T> boolean exist(T t, Field f) throws IllegalAccessException {
         if (f.getName().contains(this.field)) {
-            return String.valueOf(f.get(t)).contains(this.value);
+            return f.get(t).equals(this.value);
         }
         return false;
     }

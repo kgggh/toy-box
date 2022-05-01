@@ -1,4 +1,4 @@
-package com.toybox.modlue.fsspage.model;
+package com.toybox.module.fsspage.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

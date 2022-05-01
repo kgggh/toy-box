@@ -1,8 +1,6 @@
-package com.toybox.modlue.fsspage.model;
+package com.toybox.module.fsspage.model;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FilterTest {
 
