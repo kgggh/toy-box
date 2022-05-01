@@ -23,7 +23,10 @@ public class FssPage {
         }
 
         /* sort */
-
+        if(fssPageInfo.getSort() != null) {
+            Sort sort = fssPageInfo.getSort();
+            result = sort.sortBy(list);
+        }
 
         /* pagination */
         int page = fssPageInfo.getPage();
