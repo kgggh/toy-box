@@ -8,30 +8,37 @@ import java.util.List;
 
 @Slf4j
 public class FssPage {
-    public synchronized static <T> Page<T> page(FssPageInfo fssPageInfo, List<T> list) {
-        List<T> result = new ArrayList<>();
+    public synchronized static <T> PageInfo<T> page(FssPageInfo fssPageInfo, List<T> list) {
+        List<T> result = new ArrayList<>(list);
         /* filter */
-        if(fssPageInfo.getFilter() != null) {
-            Filter filter = fssPageInfo.getFilter();
-            result = filter.find(list);
+        if(!fssPageInfo.getFilter().isEmpty()) {
+            List<Filter> filters = fssPageInfo.getFilter();
+            for (Filter f : filters) {
+                f.doFilter(result);
+            }
         }
 
         /* search */
-        if(fssPageInfo.getSearch() != null) {
-            Search search = fssPageInfo.getSearch();
-            result = search.find(list);
+        if(!fssPageInfo.getSearch().isEmpty()) {
+            List <Search> searches = fssPageInfo.getSearch();
+            for (Search s : searches) {
+                s.doSearch(result);
+            }
         }
 
         /* sort */
-        if(fssPageInfo.getSort() != null) {
-            Sort sort = fssPageInfo.getSort();
-            result = sort.sortBy(list);
+        if(!fssPageInfo.getSort().isEmpty()) {
+            List<Sort> sorts = fssPageInfo.getSort();
+            for (Sort s : sorts) {
+                result = s.sortBy(result);
+            }
         }
 
         /* pagination */
-        int page = fssPageInfo.getPage();
-        int size = fssPageInfo.getSize();
+        if(fssPageInfo.getPage() == null || fssPageInfo.getSize() == null) {
+            return new PageInfo<>(result);
+        }
+        return new PageInfo<>(result, fssPageInfo.getPage(), fssPageInfo.getSize());
 
-        return new Page<>(result, page, size);
     }
 }

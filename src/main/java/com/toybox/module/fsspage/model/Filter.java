@@ -2,14 +2,16 @@ package com.toybox.module.fsspage.model;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @ToString
-public class Filter extends Finder{
+public class Filter {
     private String field;
     private String value;
 
@@ -18,52 +20,40 @@ public class Filter extends Finder{
         this.value = value;
     }
 
-    public Filter(Object t) throws IllegalAccessException {
-        for (Field f : t.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            if(f.get(t) != null) {
-                this.field = f.getName();
-                this.value = String.valueOf(f.get(t));
-            }
-        }
-    }
-
-    @Override
-    public <T> List<T> find(List<T> list) {
-        if (this.field == null || this.value == null) {
-            return list;
-        }
-        if(list.isEmpty()) {
-            return list;
-        }
-
+    public <T> void doFilter(List<T> list) {
         try {
-            List<T> result = new ArrayList<>();
-            for (T t : list) {
-                Field[] declaredFields = t.getClass().getDeclaredFields();
-                add(result, t, declaredFields);
+            if (isEmpty(list)) {
+                return;
             }
-            return result;
-        } catch (IllegalAccessException e){
+            Iterator<T> it = list.iterator();
+            while(it.hasNext()){
+                T item = it.next();
+                Set<Field> fields = getAllFields(item);
+                for (Field f : fields) {
+                    f.setAccessible(true);
+                    if (f.getName().equals(this.field)) {
+                        if (!isEquals(item, f)) {
+                            it.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e){
             log.error(e.getMessage(), e);
-            return new ArrayList<>();
         }
     }
 
-    private <T> void add(List<T> result, T t, Field[] declaredFields) throws IllegalAccessException {
-        for (Field f : declaredFields) {
-            f.setAccessible(true);
-            if(exist(t, f)){
-                result.add(t);
-            }
-        }
+    private <T> Set<Field> getAllFields(T item) {
+        return ReflectionUtils.getAllFields(item.getClass());
     }
 
-    @Override
-    protected <T> boolean exist(T t, Field f) throws IllegalAccessException {
-        if (f.getName().contains(this.field)) {
-            return f.get(t).equals(this.value);
-        }
-        return false;
+
+    private <T> boolean isEquals(T item, Field f) throws IllegalAccessException {
+        return String.valueOf(f.get(item)).equals(this.value);
+    }
+
+    private <T> boolean isEmpty(List<T> list) {
+        return this.field == null || this.value == null || list.size() == 0;
     }
 }
