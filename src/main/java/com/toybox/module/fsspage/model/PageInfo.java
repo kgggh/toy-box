@@ -14,6 +14,7 @@ public class PageInfo<T> {
     private int totalPage;
     private Integer page;
     private Integer size;
+    private boolean hasNext;
 
     public PageInfo(List<T> data) {
         this.data = data;
@@ -41,5 +42,9 @@ public class PageInfo<T> {
             totalPage++;
         }
         return totalPage;
+    }
+
+    public boolean isHasNext() {
+        return this.page + 1 < this.totalPage ? true : false;
     }
 }

@@ -1,6 +1,5 @@
 package com.toybox.module.fsspage.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -68,17 +67,17 @@ public class FssPageInfo {
             return this;
         }
 
-        public FssPageInfoBuilder filter(Object o) {
-            if(o == null){
-                return null;
+        public FssPageInfoBuilder filter(Object target) {
+            if(target == null){
+                return this;
             }
 
-            for (Field f : o.getClass().getDeclaredFields()) {
+            for (Field f : target.getClass().getDeclaredFields()) {
                 f.setAccessible(true);
                 try {
-                    if(f.get(o) != null) {
+                    if(f.get(target) != null) {
                         String field = f.getName();
-                        String value = String.valueOf(f.get(o));
+                        String value = String.valueOf(f.get(target));
                         this.filter.add(new Filter(field, value));
                     }
                 } catch (IllegalAccessException e) {
@@ -93,15 +92,15 @@ public class FssPageInfo {
             return this;
         }
 
-        public FssPageInfoBuilder search(Object o) {
-            if(o == null){
-                return null;
+        public FssPageInfoBuilder search(Object target) {
+            if(target == null){
+                return this;
             }
 
-            for (Field f : o.getClass().getDeclaredFields()) {
+            for (Field f : target.getClass().getDeclaredFields()) {
                 f.setAccessible(true);
                 try {
-                    add(o, f);
+                    add(target, f);
                 } catch (IllegalAccessException e) {
                     log.error(e.getMessage(), e);
                 }

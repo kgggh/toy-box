@@ -47,13 +47,13 @@ public class Sort {
                                 Object secondValue = optField.get().get(second);
 
                                 if (firstValue instanceof Integer) {
-                                    if (this.sortType.name().equals(SortType.ASC.name())) {
+                                    if (this.sortType.equals(SortType.ASC)) {
                                         i.set(((Integer) firstValue).compareTo((Integer) (secondValue)));
                                     } else {
                                         i.set(((Integer) secondValue).compareTo((Integer) (firstValue)));
                                     }
                                 } else {
-                                    if (this.sortType.name().equals(SortType.ASC.name())) {
+                                    if (this.sortType.equals(SortType.ASC)) {
                                         i.set((String.valueOf(firstValue)).compareTo(String.valueOf(secondValue)));
                                     } else {
                                         i.set((String.valueOf(secondValue)).compareTo(String.valueOf(firstValue)));
